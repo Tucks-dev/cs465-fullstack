@@ -14,6 +14,7 @@ const tripsList = async(req, res) => {
                 .status(404)
                 .json(err);
     } else {
+            res.set('CacheControl', 'no-store');
             return res
                 .status(200)
                 .json(q);

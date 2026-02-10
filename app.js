@@ -14,6 +14,9 @@ var handlebars = require('hbs');
 require('./app_api/models/db');
 
 var app = express();
+app.disable('etag');
+
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'app_server', 'views'));
@@ -27,6 +30,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/api', (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'http://localhost:4200');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  next();
+});
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
