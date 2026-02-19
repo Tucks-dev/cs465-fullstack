@@ -5,6 +5,8 @@ import { TripCard } from '../trip-card/trip-card';
 import { Trip } from '../models/trip';
 import { TripData } from '../services/trip-data';
 import { Router } from '@angular/router';
+import { AuthenticationService } from '../services/authentication';
+
 
 @Component({
   selector: 'app-trip-listing',
@@ -19,6 +21,7 @@ export class TripListing implements OnInit {
   message: string = '';
   constructor(
     private tripData: TripData,
+    private authenticationService: AuthenticationService,
     private router: Router,
     private cdr: ChangeDetectorRef
   ) {
@@ -45,6 +48,11 @@ export class TripListing implements OnInit {
         console.log('Error: ' + error);
       },
     });
+  }
+
+    public isLoggedIn()
+  {
+    return this.authenticationService.isLoggedIn();
   }
 
   ngOnInit(): void {
