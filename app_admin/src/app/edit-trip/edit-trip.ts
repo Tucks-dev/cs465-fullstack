@@ -5,6 +5,19 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule }
 from "@angular/forms";
 import { TripData } from '../services/trip-data';
 import { Trip } from '../models/trip';
+import { AbstractControl, ValidationErrors } from '@angular/forms';
+
+function urlValidator(control: AbstractControl): ValidationErrors | null {
+  const value = (control.value ?? '').trim();
+  if (!value) return null;
+
+  try {
+    new URL(value);
+    return null;
+  } catch {
+    return { invalidUrl: true };
+  }
+}
 
 @Component({
 selector: 'app-edit-trip',
@@ -52,26 +65,39 @@ image: ['', Validators.required],
 description: ['', Validators.required]
 })
 
-this.tripDataService.getTrip(tripCode)
-.subscribe({
-next: (value: any) => {
-this.trip = value;
-// Populate our record into the form
-this.editForm.patchValue(value[0]);
-if(!value)
-{
-this.message = 'No Trip Retrieved!';
-}
-else{
-this.message = 'Trip: ' + tripCode + ' retrieved';
-}
-console.log(this.message);
-},
-error: (error: any) => {
-console.log('Error: ' + error);
-}
-})
-}
+    this.tripDataService.getTrip(tripCode)
+      .subscribe({
+        next: (value: any) => {
+          if (!value || value.length === 0) {
+            this.message = 'No Trip Retrieved!';
+            return;
+          }
+
+          
+          const trip = value[0];
+          this.trip = trip;
+
+          // Normalize date for <input type="date"> (YYYY-MM-DD)
+          const normalizedStart =
+            typeof trip.start === 'string'
+              ? trip.start.slice(0, 10)
+              : new Date(trip.start).toISOString().slice(0, 10);
+
+          // Populate our record into the form
+          this.editForm.patchValue({
+            ...trip,
+            start: normalizedStart
+          });
+
+          this.message = 'Trip: ' + tripCode + ' retrieved';
+          console.log(this.message);
+        },
+        error: (error: any) => {
+          console.log('Error: ' + error);
+          this.message = 'Error retrieving trip from server.';
+        }
+      });
+  }
 
 public onSubmit()
 {

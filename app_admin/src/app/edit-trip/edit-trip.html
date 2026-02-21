@@ -1,5 +1,10 @@
 <div class="col-md-4">
   <h2 class="text-center">Edit Trip</h2>
+
+  <p *ngIf="message" class="alert alert-info">
+    {{ message }}
+  </p>
+
   <form #ngForm="ngForm" [formGroup]="editForm" 
   (ngSubmit)="onSubmit()">
 
@@ -91,6 +96,9 @@
       <div *ngIf="submitted && f['image'].errors">
         <div *ngIf="f['image'].errors?.['required']">
           Image Name is required
+        </div>
+        <div *ngIf="f['image'].errors?.['invalidUrl']">
+          Image must be a valid URL (include http:// or https://).
         </div>
       </div>
     </div>
