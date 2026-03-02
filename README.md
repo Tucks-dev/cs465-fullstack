@@ -95,4 +95,4 @@ These skills make me a stronger and more marketable candidate for software devel
 
 ## Author
 
-**[Your Name]**
+**Tucker Middleton**
